@@ -1,5 +1,7 @@
 import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+
 const App = (props) => {
 
     const fontHeight = () => {
@@ -10,15 +12,20 @@ const App = (props) => {
     }
 
     return (
-        <View style={[styles.logoStyle, { height: props.height, width: props.width, borderWidth: borderwidth() }]}>
-            <Text style={{ fontSize: fontHeight(), fontWeight: 'bold', color: '#9933ff' }}>Todo</Text>
-        </View>
+        <SafeAreaView style={[styles.logoStyle, { height: props.height, width: props.width, borderWidth: borderwidth() }]}>
+            <LinearGradient
+                colors={['#1aff8c', '#fff', '#fff', '#1aff8c']}
+                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 200 }}
+            >
+                <Text style={{ fontSize: fontHeight(), fontWeight: 'bold', color: '#7300e6' }}>Todo</Text>
+            </LinearGradient>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     logoStyle: {
-        backgroundColor: '#1aff8c',
+        backgroundColor: 'white',
         borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',

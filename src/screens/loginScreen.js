@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Animated, SafeAreaView } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import MainScreen from './mainScreen'
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logo from '../components/logo'
 import GoogleIcon from 'react-native-vector-icons/Ionicons'
 import Spinner from 'react-native-loading-spinner-overlay';
+import LinearGradient from 'react-native-linear-gradient';
 
 GoogleSignin.configure({
     webClientId:
@@ -41,6 +40,7 @@ const FadeInView = (props) => {
 const App = (props) => {
     const [spinner, setSpinner] = useState(false);
 
+
     async function onGoogleButtonPress() {
         setSpinner(true);
         try {
@@ -57,32 +57,36 @@ const App = (props) => {
     }
 
 
-
-
     return (
-        <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
-            <FadeInView style={{}}>
-                <Logo height={200} width={200} />
-                <Text style={styles.thinTextStyle}>Groww</Text>
-                <Text style={styles.thickTextStyle}>Assignment</Text>
-            </FadeInView>
-            <Spinner
-                visible={spinner}
-                textContent={'please wait...'}
-                textStyle={{ color: 'white' }}
-            />
-            <View style={{ marginTop: 70 }} />
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+            <LinearGradient
+                colors={['#808080', '#fff', '#fff', '#808080']}
+                style={{
+                    flex: 1, justifyContent: 'center', alignItems: 'center'
+                }}
+            >
+                <FadeInView style={{}}>
+                    <Logo height={200} width={200} />
+                    <Text style={styles.thinTextStyle}>Charzer</Text>
+                    <Text style={styles.thickTextStyle}>Assignment</Text>
+                </FadeInView>
+                <Spinner
+                    visible={spinner}
+                    textContent={'please wait...'}
+                    textStyle={{ color: 'white' }}
+                />
+                <View style={{ marginTop: 70 }} />
 
-            <GoogleSigninButton
-                style={{ width: 192, height: 48 }}
-                size={GoogleSigninButton.Size.Wide}
-                color={GoogleSigninButton.Color.Dark}
-                onPress={async () => {
-                    await onGoogleButtonPress();
-                    props.navigation.replace('App')
-                }} />
-
-        </View>
+                <GoogleSigninButton
+                    style={{ width: 192, height: 48 }}
+                    size={GoogleSigninButton.Size.Wide}
+                    color={GoogleSigninButton.Color.Dark}
+                    onPress={async () => {
+                        await onGoogleButtonPress();
+                        props.navigation.replace('App');
+                    }} />
+            </LinearGradient>
+        </SafeAreaView>
     )
 }
 

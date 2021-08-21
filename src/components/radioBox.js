@@ -3,16 +3,16 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
 const App = (props) => {
     return (
-        <View style={{ flexDirection: 'row', }}>
-            <TouchableOpacity onPress={(props.statusButton)} style={[styles.radioStyle, { backgroundColor: props.checked ? 'green' : 'lightgray' }]}>
+        <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center' }}>
+            <TouchableOpacity onPress={(props.statusButton)} style={[styles.radioStyle, { backgroundColor: props.checked ? 'green' : '#f2f2f2' }]}>
             </TouchableOpacity>
-            <Text>{props.textValue}</Text>
+            <Text style={{ color: 'gray', fontSize: props.small ? 12 : 16 }}>{props.textValue}</Text>
         </View>
     )
 }
 const styles = StyleSheet.create({
     radioStyle: {
-        borderWidth: 3.5,
+        borderWidth: 4,
         borderColor: 'lightgray',
         height: 22,
         width: 22,

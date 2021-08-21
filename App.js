@@ -21,9 +21,9 @@ const Tab = createMaterialBottomTabNavigator();
 const App = () => {
   return (
     <Tab.Navigator activeColor="white"
-      inactiveColor="#a6a6a6"
+      inactiveColor="#4d4d4d"
       labeled={false}
-      barStyle={{ backgroundColor: 'black', }}
+      barStyle={{ backgroundColor: '#999999', }}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
