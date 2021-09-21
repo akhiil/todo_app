@@ -1,249 +1,166 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Button, Image, ScrollView, TextInput } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, Button, ScrollView, Linking } from 'react-native';
+import styles from '../components/css'
+import { useSelector, useDispatch } from 'react-redux';
+import ThreeBar from 'react-native-vector-icons/MaterialCommunityIcons';
+import AllIcon from 'react-native-vector-icons/Foundation'
+import WorkIcon from 'react-native-vector-icons/Ionicons';
+import MusicIcon from 'react-native-vector-icons/FontAwesome5'
+import TravelIcon from 'react-native-vector-icons/SimpleLineIcons'
+import StudyIcon from 'react-native-vector-icons/AntDesign';
+import HomeIcon from 'react-native-vector-icons/AntDesign';
+import ShoppingIcon from 'react-native-vector-icons/Feather';
+import OtherIcon from 'react-native-vector-icons/AntDesign';
+import PlusIcon from 'react-native-vector-icons/Feather';
+import asynFunction from '../components/asynFunction';
 import auth from '@react-native-firebase/auth';
-import Header from '../components/header';
-import FilterModal from './mainScreen';
-import RadioBox from '../components/radioBox'
-import DownIcon from 'react-native-vector-icons/AntDesign';
-import TodoDataShow from '../components/todoDataShow'
-import { useDispatch, useSelector } from 'react-redux';
-import Modal from 'react-native-modal';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { set } from 'react-native-reanimated';
+
+// const categories = ["All", "Work", "Music", "Travel", "Study", "Home", "Shopping", "Other"]
+const categories = [{
+    name: 'All',
+    size: 0
+}, {
+    name: 'Work',
+    size: 0
+}, {
+    name: 'Music',
+    size: 0
+}, {
+    name: 'Travel',
+    size: 0
+}, {
+    name: 'Study',
+    size: 0
+}, {
+    name: 'Home',
+    size: 0
+}, {
+    name: 'Shopping',
+    size: 0
+}, {
+    name: 'Other',
+    size: 0
+}]
 
 
-// const reference = database().ref('/users/123');
-//const tempToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjExMmU0YjUyYWI4MzMwMTdkMzg1Y2UwZDBiNGM2MDU4N2VkMjU4NDIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI2ODI1NjUyMjk1NDEtNHZrODJqMmJjdDh0cGIxcTRwcjMydmh0ODd1dDhjZzcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI2ODI1NjUyMjk1NDEtY2dwdGJsMWZjMTAyNm8ybG1wNDRhMmw3OXJzcHF2N24uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTY5NzIzNjI2NDI3NTM4NTQ1OTEiLCJlbWFpbCI6ImFraGlsY3NrMTExMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFraGlsIEt1bWFyIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdnMndocllPdXFHUi1MVEdkdDFvQjgtWm9vZkpNaUhqZGJUdkxuaD1zOTYtYyIsImdpdmVuX25hbWUiOiJBa2hpbCIsImZhbWlseV9uYW1lIjoiS3VtYXIiLCJsb2NhbGUiOiJlbi1HQiIsImlhdCI6MTYyNDUxMjc3OCwiZXhwIjoxNjI0NTE2Mzc4fQ.Pouadbw40sx6UjxfZrsbIj2q98NdwKPvBC2KrpSEZRFJT0AXHn0g7Y7G1ZlC8auvi1TeOUkqu6zLCDLMKMVUeWzhlYXb3zq-aOltFhVSmd_13CJRi3jzz976hHAogidRhbj7X71ee636PcP3CeFAyeBj7ql9Bct7AUnaqCgqV2pTVYRdBqE1iCvIunF79iCr_z_rXMU83SKqLpJ9GlFwQC8KIrwkMBnPL1UQxZyIMFLFnzc6hKtJpcgrNxJKk_xgqimiiOPiPO2d0HCxMfmdQk3tCWxScK7We6EHEvI19J6yqIWJcgjbIu1gPzOJSMWvzaL1x8ctNN2TV7NESSdgYA"
 const App = (props) => {
-    const [objectArray, setObjectArray] = useState([]);
-    const [stringArray, setStringArray] = useState([]);
-    const [todoInput, setTodoInput] = useState('');
-    const [status, setStatus] = useState(false);
-    const [spinner, setSpinner] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isfilterModalVisible, setIsfilterModalVisible] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState('');
-    const [items, setItems] = useState([
-        { label: 'Work', value: 'work' },
-        { label: 'Fitness', value: 'fitness' },
-        { label: 'Assignment', value: 'assignment' },
-        { label: 'Shopping-list', value: 'shopping-list' },
-        { label: 'Milestone', value: 'milestone' },
-        { label: 'Other', value: 'other' }
-    ]);
-    const [otherCategory, setOtherCategory] = useState('');
-
-
-
-    const dispatch = useDispatch();
-
-    const todoData = useSelector((state) => {
-        return state.todoReducer
+    const [nameData, setNameData] = useState([]);
+    const [count, setCount] = useState({
     })
 
-    // console.log(todoData)
+    useEffect(async () => {
+        const asyncData = await asynFunction.getItem(user?.email);
+        let All = 0, Work = 0, Music = 0, Travel = 0, Study = 0, Home = 0, Shopping = 0, Other = 0;
+        asyncData.map((item) => {
+            All++
+            if (item.category === 'Work') {
+                Work++;
+            } else if (item.category === 'Music') {
+                Music++;
+            } else if (item.category === 'Travel') {
+                Travel++;
+            } else if (item.category === 'Study') {
+                Study++;
+            } else if (item.category === 'Home') {
+                Home++;
+            } else if (item.category === 'Shopping') {
+                Shopping++;
+            } else if (item.category === 'Other') {
+                Other++;
+            }
+        })
+
+        setCount({ All, Work, Music, Travel, Study, Home, Shopping, Other })
+    }, [])
+
+    // console.log(count)
+
+    const onSignOut = async () => {
+        await auth().signOut()
+        props.navigation.replace('Login')
+    }
 
 
-    const addTodoHandler = () => {
-        if (todoInput !== "") {
-            dispatch({
-                type: 'ADD_TODO', value: todoInput, completed: status,
-                category: value === 'other' ? otherCategory : value === '' ? 'work' : value
-            })
+
+    const iconFinder = (value) => {
+        switch (value) {
+            case ('All'):
+                return <AllIcon name="clipboard-notes" size={32} color="#4d79ff" />;
+            case ('Music'):
+                return <MusicIcon name="headphones-alt" size={30} color="#ff99dd" />;
+            case ('Work'):
+                return <WorkIcon name="briefcase-outline" size={30} color="#ffa64d" />;
+            case ('Travel'):
+                return <TravelIcon name="plane" size={30} color="#00cc66" />;
+            case ('Study'):
+                return <StudyIcon name="laptop" size={30} color="#bf80ff" />;
+            case ('Home'):
+                return <HomeIcon name="home" size={32} color="#ff8533" />;
+            case ('Shopping'):
+                return <ShoppingIcon name="shopping-bag" size={30} color="#d966ff" />;
+            case ('Other'):
+                return <OtherIcon name="switcher" size={30} color="#8cff1a" />;
         }
-        setTodoInput('');
-        setStatus(false);
     }
-
-
-    const statusButton = () => {
-        setStatus(!status)
-    }
-
 
 
     const user = auth().currentUser;
 
+
     return (
-        <View style={{ flex: 1 }}>
-            <View style={{ alignItems: 'center' }}>
-                <Header name="Todo Home" />
-            </View>
-            <ScrollView>
 
-                <View style={styles.textInputStyle}>
-                    <TextInput
-                        showSoftInputOnFocus={false}
-                        placeholder="Add your todo"
-                        placeholderTextColor='#cccccc'
-                        style={styles.inputStyle}
-                        onChange={(value) => setTodoInput(value.nativeEvent.text)}
-                        value={todoInput}
-                        onSubmitEditing={addTodoHandler}
-                        onPressIn={() => setIsModalVisible(true)}
-                    />
-                </View>
-                {/* <Spinner
-                    visible={spinner}
-                    textContent={'Fetching data...'}
-                    textStyle={{ color: 'white' }}
-                /> */}
+        <View style={styles.Container}>
 
+            <View style={styles.threeBarIconStyle}>
+                <ThreeBar name="playlist-edit" size={40} />
                 <TouchableOpacity
-                    onPress={() => setIsfilterModalVisible(true)}
-                    style={styles.filterButtonStyle}>
-                    <Text style={{ color: '#f2f2f2', marginRight: 5 }}>Filter by Category</Text>
-                    <DownIcon name="caretdown" size={20} color="#4d4d4d" />
+                    onPress={onSignOut}
+                    style={styles.logoutButtonStyle}>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Log out</Text>
                 </TouchableOpacity>
+            </View>
 
-                {/* filter screen modal */}
-
-                <Modal
-                    style={{}}
-                    animationInTiming={800}
-                    animationOutTiming={800}
-                    animationIn={'slideInDown'}
-                    animationOut={'slideOutDown'}
-                    isVisible={isfilterModalVisible}>
-                    <FilterModal onClick={() => setIsfilterModalVisible(false)} />
-                </Modal>
+            <View style={styles.homeScreenHeader}>
+                <Text style={styles.homeScreenHeaderText}>Todos</Text>
+            </View>
 
 
-                {/* modal part */}
-                <Modal
-                    style={{ top: 0 }}
-                    animationInTiming={800}
-                    animationOutTiming={800}
-                    animationIn={'slideInLeft'}
-                    animationOut={'slideOutRight'}
-                    isVisible={isModalVisible}>
-                    <View style={styles.modalStyle}>
-                        <Text style={{ color: 'gray', fontWeight: 'bold', marginBottom: 5 }}>Hello, {user?.displayName} !!</Text>
-                        <TextInput
-                            placeholderTextColor='#cccccc'
-                            style={styles.inputStyle}
-                            placeholder="enter your todo"
-                            onChange={(value) => setTodoInput(value.nativeEvent.text)}
-                            value={todoInput}
-                        />
 
-                        <View style={{ width: '80%', marginTop: 10 }}>
-                            <DropDownPicker
-                                placeholder="Select a category"
-                                open={open}
-                                value={value}
-                                items={items}
-                                setOpen={setOpen}
-                                setValue={setValue}
-                                setItems={setItems}
-                                maxHeight={150}
-                                style={{
-                                    backgroundColor: "#e6e6e6"
-                                }}
-                                textStyle={{
-                                    fontSize: 15
-                                }}
-                            />
-                        </View>
+            <View>
+                <FlatList data={categories}
+                    numColumns={2}
+                    ListFooterComponent={<View style={{ height: 200 }} />}
+                    keyExtractor={item => item.name}
+                    renderItem={({ item }) => {
+                        return (
+                            <TouchableOpacity style={[styles.categoryBoxStyle, {}]}
+                                onPress={() => {
+                                    props.navigation.replace('CategoryScreen', { name: item.name })
+                                }} >
+                                <View style={styles.categoryIconStyle}>
+                                    {iconFinder(item.name)}
+                                </View>
+                                <Text style={styles.categoryBoxTextHeader}>{item.name}</Text>
+                                <Text style={styles.categoryBoxText}>{count[item.name] ? count[item.name] : 0} tasks</Text>
+                            </TouchableOpacity>
+                        )
+                    }}
+                />
+            </View>
 
-                        {value === 'other' ? <TextInput
-                            placeholderTextColor='#cccccc'
-                            style={[styles.inputStyle, { width: '70%', height: 40, marginTop: 5 }]}
-                            placeholder="please specify..."
-                            onChange={(value) => setOtherCategory(value.nativeEvent.text)}
-                            value={otherCategory}
-                        /> : null}
+            <TouchableOpacity
+                onPress={() => {
+                    props.navigation.navigate('AccountScreen');
 
+                }}
+                style={styles.plusIconStyle}>
+                <PlusIcon name="plus" size={30} color="white" />
+            </TouchableOpacity>
 
-                        <View style={{ marginTop: 10 }}>
-                            <RadioBox textValue="Completed" statusButton={statusButton} checked={status} />
-                            <RadioBox textValue="In-completed" statusButton={statusButton} checked={status ? false : true} />
-                        </View>
-
-
-                        <TouchableOpacity
-                            style={{
-                                alignSelf: 'flex-end',
-                                backgroundColor: 'gray',
-                                padding: 10,
-                                paddingHorizontal: 20,
-                                borderRadius: 5,
-                                marginRight: 20,
-                                marginTop: 20
-                            }}
-                            onPress={() => {
-                                addTodoHandler();
-                                setOtherCategory('');
-                                setValue('')
-                                setIsModalVisible(false)
-                            }}>
-                            <Text style={{ color: '#f2f2f2', fontWeight: 'bold' }}>OK</Text>
-                        </TouchableOpacity>
-                    </View>
-                </Modal>
-                {/* modal part */}
-
-
-                <ScrollView style={{}} horizontal={true}>
-                    <TodoDataShow todoData={todoData} />
-                </ScrollView>
-            </ScrollView>
         </View>
-    );
-}
 
-const styles = StyleSheet.create({
-    textInputStyle: {
-        height: 50,
-        width: '100%',
-        marginTop: 20,
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    buttonStyle: {
-        backgroundColor: '#9933ff',
-        width: '95%',
-        paddingVertical: 10,
-        marginTop: 10,
-        paddingHorizontal: 10,
-        borderRadius: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-    },
-    buttonTextStyle: {
-        color: '#999999',
-        fontWeight: 'bold',
-        fontSize: 18
-    },
-    inputStyle: {
-        fontSize: 18,
-        width: '85%',
-        backgroundColor: '#e6e6e6',
-        borderRadius: 5,
-        paddingHorizontal: 15,
-        fontFamily: 'sans-serif-condensed',
-        color: '#737373'
-    },
-    modalStyle: {
-        backgroundColor: '#f2f2f2',
-        paddingVertical: 10,
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        width: '100%',
-        top: 80,
-        paddingBottom: 30
-    },
-    filterButtonStyle: {
-        backgroundColor: '#999999',
-        alignSelf: 'center',
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        marginTop: 5,
-        borderRadius: 5,
-        flexDirection: 'row',
-    }
-})
+    )
+}
 
 export default App;
