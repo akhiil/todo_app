@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import CheckBox from 'react-native-check-box'
-import { useSelector, useDispatch } from 'react-redux';
 
 const App = (props) => {
 

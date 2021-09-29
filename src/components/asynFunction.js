@@ -6,7 +6,7 @@ export default {
         try {
             return await AsyncStorage.setItem(key, JSON.stringify(value));
         } catch (error) {
-            // console.error('AsyncStorage#setItem error: ' + error.message);
+            console.log(error);
         }
     },
     async getItem(key) {
@@ -16,8 +16,8 @@ export default {
                 if (result) {
                     try {
                         result = JSON.parse(result);
-                    } catch (e) {
-                        // console.error('AsyncStorage#getItem error deserializing JSON for key: ' + key, e.message);
+                    } catch (error) {
+                        console.log(error);
                     }
                 }
                 return result;

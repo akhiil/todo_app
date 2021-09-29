@@ -1,14 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, View, TextInput, TouchableOpacity, Modal, FlatList, AsyncStorage } from 'react-native';
 import CrossIcon from 'react-native-vector-icons/Entypo'
 import BellIcon from 'react-native-vector-icons/Feather'
 import styles from '../components/css';
 import date from 'date-and-time';
 import auth from '@react-native-firebase/auth';
-import NoteIcon from 'react-native-vector-icons/FontAwesome'
-import CategoryIcon from 'react-native-vector-icons/AntDesign'
-import DropDownPicker from 'react-native-dropdown-picker';
 import CheckBox from 'react-native-check-box'
 import uuid from 'react-native-uuid';
 import asyncStorage from '../components/asynFunction'

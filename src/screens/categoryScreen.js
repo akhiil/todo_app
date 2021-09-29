@@ -66,10 +66,6 @@ const App = (props) => {
             dispatch({ type: 'UPDATE_TODO', payload: value, id })
     }
 
-    const deleteTodoListHandler = (id) => {
-        setDeleteTodoList([...deleteTodoList, id])
-    }
-
     const deleteTodoHandler = async (id) => {
         // console.log("dekete button", id)
         const data = await asynFunction.getItem(user?.email);
