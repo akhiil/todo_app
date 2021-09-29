@@ -34,29 +34,6 @@ const App = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#4d79ff' }}>
-
-            {/* <View style={{}}>
-                <Logo height={200} width={200} />
-                <Text style={styles.thinTextStyle}>Charzer</Text>
-                <Text style={styles.thickTextStyle}>Assignment</Text>
-            </View>
-            <Spinner
-                visible={spinner}
-                textContent={'please wait...'}
-                textStyle={{ color: 'white' }}
-            />
-            <View style={{ marginTop: 70 }} />
-
-            <GoogleSigninButton
-                style={{ width: 192, height: 48 }}
-                size={GoogleSigninButton.Size.Wide}
-                color={GoogleSigninButton.Color.Dark}
-                onPress={async () => {
-                    await onGoogleButtonPress();
-                    props.navigation.replace('HomeScreen');
-                }} /> */}
-
-
             <View style={styles.upperPartStyle}>
                 <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white', textAlign: 'center', }}>Todo - App</Text>
                 <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'cursive', fontSize: 18 }}>save your todos</Text>
