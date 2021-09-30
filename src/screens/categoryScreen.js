@@ -59,13 +59,6 @@ const App = (props) => {
         }
     }
 
-
-    const itemCompletedHandler = (id, value) => {
-        setTempValue(!tempvalue)
-        if (id && value)
-            dispatch({ type: 'UPDATE_TODO', payload: value, id })
-    }
-
     const deleteTodoHandler = async (id) => {
         // console.log("dekete button", id)
         const data = await asynFunction.getItem(user?.email);
